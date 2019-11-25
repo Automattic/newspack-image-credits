@@ -12,6 +12,9 @@
 
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * Runs the whole show.
+ */
 class Newspack_Image_Credits {
 
 	const MEDIA_CREDIT_META = '_media_credit';
@@ -22,11 +25,22 @@ class Newspack_Image_Credits {
 
 	const MEDIA_CREDIT_CAN_DISTRIBUTE_META = '_navis_media_can_distribute';
 
+	/**
+	 * Hook actions and filters.
+	 */
 	public static function init() {
 		add_filter( 'attachment_fields_to_save', [ __CLASS__, 'save_media_credit' ], 10, 2 );
 		add_filter( 'attachment_fields_to_edit', [ __CLASS__, 'add_media_credit' ], 10, 2 );
+		add_filter( 'get_the_excerpt', [ __CLASS__, 'add_credit_to_attachment_excerpts' ], 10, 2 );
+		add_filter( 'render_block', [ __CLASS__, 'add_credit_to_image_block' ], 10, 2 );
 	}
 
+	/**
+	 * Get media credit info for an attachment.
+	 *
+	 * @param int $attachment_id Post ID of the attachment.
+	 * @return array Credit info. See $output at the top of this method.
+	 */
 	public static function get_media_credit( $attachment_id ) {
 		$output = [
 			'id'             => $attachment_id,
@@ -59,10 +73,39 @@ class Newspack_Image_Credits {
 		return $output;
 	}
 
+	/**
+	 * Get credit info as an HTML string.
+	 *
+	 * @param int $attachment_id Attachment post ID.
+	 * @return string The credit ready for output.
+	 */
 	public static function get_media_credit_string( $attachment_id ) {
+		$credit_info = self::get_media_credit( $attachment_id );
+		if ( ! $credit_info['credit'] ) {
+			return '';
+		}
 
+		$credit = $credit_info['credit'];
+		if ( $credit_info['organization'] ) {
+			$credit .= ' / ' . $credit_info['organization'];
+		}
+
+		if ( $credit_info['credit_url'] ) {
+			$credit = '<a href="' . $credit_info['credit_url'] . '" target="_blank">' . $credit . '</a>';
+		}
+
+		$credit = '<span class="image-credit">' . sprintf( __( 'Credit: %s', 'newspack-image-credits' ), $credit ) . '</span>';
+
+		return wp_kses_post( $credit );
 	}
 
+	/**
+	 * Save the media credit info.
+	 *
+	 * @param array $post Array of post info.
+	 * @param array $attachment Array of media field input info.
+	 * @return array $post Unmodified post info.
+	 */
 	public static function save_media_credit( $post, $attachment ) {
 		if ( isset( $attachment['media_credit'] ) ) {
 			update_post_meta( $post['ID'], self::MEDIA_CREDIT_META, sanitize_text_field( $attachment['media_credit'] ) );
@@ -83,6 +126,13 @@ class Newspack_Image_Credits {
 		return $post;
 	}
 
+	/**
+	 * Add media credit fields to the media editor.
+	 *
+	 * @param array $fields Array of media editor field info.
+	 * @param WP_Post $post Post object for current attachment.
+	 * @return array Modified $fields.
+	 */
 	public static function add_media_credit( $fields, $post ) {
 		$credit_info = self::get_media_credit( $post->ID );
         $fields['media_credit'] = [
@@ -113,5 +163,52 @@ class Newspack_Image_Credits {
         return $fields;
 	}
 
+	/**
+	 * Add media credit to attachment excerpts (captions) when possible.
+	 *
+	 * @param string $excerpt Attachment excerpt/caption.
+	 * @param WP_Post $post Post object.
+	 * @return string Modified $excerpt.
+	 */
+	public static function add_credit_to_attachment_excerpts( $excerpt, $post ) {
+		if ( 'attachment' !== $post->post_type ) {
+			return $excerpt;
+		}
+
+		$credit_string = self::get_media_credit_string( $post->ID );
+		if ( $excerpt && $credit_string ) {
+			return $excerpt . ' ' . $credit_string;
+		}
+
+		return $credit_string;
+	}
+
+	/**
+	 * Add media credit to image blocks when possible.
+	 *
+	 * @param string $block_output HTML block output.
+	 * @param array $block Raw block info.
+	 * @return string Modified $block_output.
+	 */
+	public static function add_credit_to_image_block( $block_output, $block ) {
+		if ( 'core/image' !== $block['blockName'] || empty( $block['attrs']['id'] ) ) {
+			return $block_output;
+		}
+
+		$credit_string = self::get_media_credit_string( $block['attrs']['id'] );
+		if ( ! $credit_string ) {
+			return $block_output;
+		}
+
+		if ( strpos( $block_output, '</figcaption>' ) ) {
+			// If an image caption exists, add the credit to it.
+			$block_output = str_replace( '</figcaption>', ' ' . $credit_string . '</figcaption>', $block_output );
+		} else {
+			// If an image caption doesn't exist, make the credit the caption.
+			$block_output = str_replace( '</figure>', '<figcaption>' . $credit_string . '</figcaption><figure>', $block_output );
+		}
+
+		return $block_output;
+	}
 }
 Newspack_Image_Credits::init();
