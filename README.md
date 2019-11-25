@@ -1,0 +1,1 @@
+# newspack-image-credits
