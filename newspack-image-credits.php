@@ -178,9 +178,11 @@ class Newspack_Image_Credits {
 		$credit_string = self::get_media_credit_string( $post->ID );
 		if ( $excerpt && $credit_string ) {
 			return $excerpt . ' ' . $credit_string;
+		} elseif ( $credit_string ) {
+			return $credit_string;
+		} else {
+			return $excerpt;
 		}
-
-		return $credit_string;
 	}
 
 	/**
