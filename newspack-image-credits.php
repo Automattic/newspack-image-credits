@@ -207,7 +207,7 @@ class Newspack_Image_Credits {
 			$block_output = str_replace( '</figcaption>', ' ' . $credit_string . '</figcaption>', $block_output );
 		} else {
 			// If an image caption doesn't exist, make the credit the caption.
-			$block_output = str_replace( '</figure>', '<figcaption>' . $credit_string . '</figcaption><figure>', $block_output );
+			$block_output = str_replace( '</figure>', '<figcaption>' . $credit_string . '</figcaption></figure>', $block_output );
 		}
 
 		return $block_output;
