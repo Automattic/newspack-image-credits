@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Newspack Image Credits
  * Description: Add photo credit info to images. A modernization of Navis Media Credit.
- * Version: 1.0.0
+ * Version: 1.0.1
  * Author: Automattic, INN Labs, Project Argo
  * Author URI: https://newspack.blog/
  * License: GPL2
