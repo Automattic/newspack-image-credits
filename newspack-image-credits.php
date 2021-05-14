@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Newspack Image Credits
  * Description: Add photo credit info to images. A modernization of Navis Media Credit.
- * Version: 1.0.1
+ * Version: 1.0.2
  * Author: Automattic, INN Labs, Project Argo
  * Author URI: https://newspack.blog/
  * License: GPL2
@@ -94,7 +94,7 @@ class Newspack_Image_Credits {
 			$credit = '<a href="' . $credit_info['credit_url'] . '" target="_blank">' . $credit . '</a>';
 		}
 
-		$credit = '<span class="image-credit">' . sprintf( __( 'Credit: %s', 'newspack-image-credits' ), $credit ) . '</span>';
+		$credit = '<span class="image-credit">' . sprintf( __( '<span class="credit-prefix">Credit: </span>%s', 'newspack-image-credits' ), $credit ) . '</span>';
 
 		return wp_kses_post( $credit );
 	}
