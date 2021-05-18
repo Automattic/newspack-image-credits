@@ -94,7 +94,11 @@ class Newspack_Image_Credits {
 			$credit = '<a href="' . $credit_info['credit_url'] . '" target="_blank">' . $credit . '</a>';
 		}
 
-		$credit = '<span class="image-credit">' . sprintf( __( 'Credit: %s', 'newspack-image-credits' ), $credit ) . '</span>';
+		$credit = sprintf(
+			'<span class="image-credit"><span class="credit-label-wrapper">%1$s</span> %2$s</span>',
+			esc_html__( 'Credit:', 'newspack-image-credits' ),
+			$credit
+		);
 
 		return wp_kses_post( $credit );
 	}
