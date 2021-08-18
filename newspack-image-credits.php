@@ -229,10 +229,20 @@ class Newspack_Image_Credits {
 
 			$index        = -1;
 			$block_output = preg_replace_callback(
-				'/<\/figcaption>/',
+				'/<figure>(.*?)<\/figure>/',
 				function( $matches ) use ( &$credit_strings, &$index ) {
-					$index ++;
-					return ' ' . $credit_strings[ $index ] . '</figcaption>';
+					$index       ++;
+					$replacement = $matches[0];
+
+					if ( strpos( $replacement, '</figcaption>' ) ) {
+						// If an image caption exists, add the credit to it.
+						$replacement = str_replace( '</figcaption>', ' ' . $credit_strings[ $index ] . '</figcaption>', $replacement );
+					} else {
+						// If an image caption doesn't exist, make the credit the caption.
+						$replacement = str_replace( '</figure>', '<figcaption class="wp-block-jetpack-slideshow_caption gallery-caption">' . $credit_strings[ $index ] . '</figcaption></figure>', $replacement );
+					}
+
+					return $replacement;
 				},
 				$block_output
 			);
