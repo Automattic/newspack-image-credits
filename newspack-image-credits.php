@@ -197,21 +197,55 @@ class Newspack_Image_Credits {
 	 * @return string Modified $block_output.
 	 */
 	public static function add_credit_to_image_block( $block_output, $block ) {
-		if ( 'core/image' !== $block['blockName'] || empty( $block['attrs']['id'] ) ) {
+		// Only for core image blocks or Jetpack slideshow blocks.
+		if ( 'core/image' !== $block['blockName'] && 'jetpack/slideshow' !== $block['blockName'] ) {
 			return $block_output;
 		}
 
-		$credit_string = self::get_media_credit_string( $block['attrs']['id'] );
-		if ( ! $credit_string ) {
-			return $block_output;
+		// Core image blocks.
+		if ( 'core/image' === $block['blockName'] && ! empty( $block['attrs']['id'] ) ) {
+			$credit_string = self::get_media_credit_string( $block['attrs']['id'] );
+			if ( ! $credit_string ) {
+				return $block_output;
+			}
+
+			if ( strpos( $block_output, '</figcaption>' ) ) {
+				// If an image caption exists, add the credit to it.
+				$block_output = str_replace( '</figcaption>', ' ' . $credit_string . '</figcaption>', $block_output );
+			} else {
+				// If an image caption doesn't exist, make the credit the caption.
+				$block_output = str_replace( '</figure>', '<figcaption>' . $credit_string . '</figcaption></figure>', $block_output );
+			}
 		}
 
-		if ( strpos( $block_output, '</figcaption>' ) ) {
-			// If an image caption exists, add the credit to it.
-			$block_output = str_replace( '</figcaption>', ' ' . $credit_string . '</figcaption>', $block_output );
-		} else {
-			// If an image caption doesn't exist, make the credit the caption.
-			$block_output = str_replace( '</figure>', '<figcaption>' . $credit_string . '</figcaption></figure>', $block_output );
+		// Jetpack Slideshow blocks. Append credit to each slide caption.
+		if ( 'jetpack/slideshow' === $block['blockName'] && ! empty( $block['attrs']['ids'] ) ) {
+			$credit_strings = array_map(
+				function( $image_id ) {
+					return self::get_media_credit_string( $image_id );
+				},
+				array_values( $block['attrs']['ids'] )
+			);
+
+			$index        = -1;
+			$block_output = preg_replace_callback(
+				'/<figure>(.*?)<\/figure>/',
+				function( $matches ) use ( &$credit_strings, &$index ) {
+					$index       ++;
+					$replacement = $matches[0];
+
+					if ( strpos( $replacement, '</figcaption>' ) ) {
+						// If an image caption exists, add the credit to it.
+						$replacement = str_replace( '</figcaption>', ' ' . $credit_strings[ $index ] . '</figcaption>', $replacement );
+					} else {
+						// If an image caption doesn't exist, make the credit the caption.
+						$replacement = str_replace( '</figure>', '<figcaption class="wp-block-jetpack-slideshow_caption gallery-caption">' . $credit_strings[ $index ] . '</figcaption></figure>', $replacement );
+					}
+
+					return $replacement;
+				},
+				$block_output
+			);
 		}
 
 		return $block_output;
