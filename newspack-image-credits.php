@@ -234,6 +234,10 @@ class Newspack_Image_Credits {
 					$index       ++;
 					$replacement = $matches[0];
 
+					if ( empty( $credit_strings[ $index ] ) ) {
+						return $replacement;
+					}
+
 					if ( strpos( $replacement, '</figcaption>' ) ) {
 						// If an image caption exists, add the credit to it.
 						$replacement = str_replace( '</figcaption>', ' ' . $credit_strings[ $index ] . '</figcaption>', $replacement );
