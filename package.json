@@ -15,7 +15,8 @@
 		"format:php": "./vendor/bin/phpcbf .",
 		"lint:js:staged": "eslint --ext .js,.jsx",
 		"lint:scss:staged": "stylelint --syntax scss",
-		"lint:php:staged": "./vendor/bin/phpcs"
+		"lint:php:staged": "./vendor/bin/phpcs",
+		"release:archive": "rm -rf release && mkdir -p release && rsync -r . ./release/newspack-image-credits --exclude-from='./.distignore' && cd release && zip -r newspack-image-credits.zip newspack-image-credits"
 	},
 	"lint-staged": {
 		"*.js": "npm run lint:js:staged",
