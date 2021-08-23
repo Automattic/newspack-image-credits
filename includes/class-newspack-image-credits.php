@@ -60,7 +60,14 @@ class Newspack_Image_Credits {
 			$output['can_distribute'] = true;
 		}
 
-		return $output;
+		/**
+		 * Filter for the media credit data from this plugin.
+		 * Allows third-party code to hook into and modify the credits info if needed.
+		 *
+		 * @param array $output Credit info for the attachment.
+		 * @param int   $attachment_id ID of the attachment whose credit is being filtered.
+		 */
+		return apply_filters( 'newspack_image_credits_media_credit', $output, $attachment_id );
 	}
 
 	/**
@@ -270,7 +277,7 @@ class Newspack_Image_Credits {
 		if ( $placeholder_image ) {
 			$block_output = preg_replace_callback(
 				'/src="(.*?)"/',
-				function( $matches ) use ( $placeholder_image ) {
+				function( $matches ) use ( $placeholder_image, $size ) {
 					$img_src         = $matches[1];
 					$placeholder_src = wp_get_attachment_image_url( $placeholder_image, $size );
 					if ( $placeholder_src ) {
