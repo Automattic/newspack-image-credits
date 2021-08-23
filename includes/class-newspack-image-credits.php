@@ -203,7 +203,8 @@ class Newspack_Image_Credits {
 
 			// If there's no credit, show placeholder image, if any.
 			if ( ! $credit_string ) {
-				$block_output = self::maybe_show_placeholder_image_in_block( $block_output );
+				$size         = ! empty( $block['attrs']['sizeSlug'] ) ? $block['attrs']['sizeSlug'] : null;
+				$block_output = self::maybe_show_placeholder_image_in_block( $block_output, $size );
 				return $block_output;
 			}
 
@@ -233,7 +234,8 @@ class Newspack_Image_Credits {
 					$replacement = $matches[0];
 
 					if ( empty( $credit_strings[ $index ] ) ) {
-						$replacement = self::maybe_show_placeholder_image_in_block( $replacement );
+						$size        = ! empty( $block['attrs']['sizeSlug'] ) ? $block['attrs']['sizeSlug'] : null;
+						$replacement = self::maybe_show_placeholder_image_in_block( $replacement, $size );
 						return $replacement;
 					}
 
@@ -258,10 +260,11 @@ class Newspack_Image_Credits {
 	 * Given an `<img />` tag with `src` attribute, replace the src with the placeholder image.
 	 *
 	 * @param string $block_output Content string containing `<img />` tag.
+	 * @param string $size Size of the placeholder image to fetch.
 	 *
 	 * @return string Content string but with `src` attribute replace by placeholder image src.
 	 */
-	public static function maybe_show_placeholder_image_in_block( $block_output ) {
+	public static function maybe_show_placeholder_image_in_block( $block_output, $size = 'full' ) {
 		$placeholder_image = Newspack_Image_Credits_Settings::get_settings( 'newspack_image_credits_placeholder' );
 
 		if ( $placeholder_image ) {
@@ -269,7 +272,7 @@ class Newspack_Image_Credits {
 				'/src="(.*?)"/',
 				function( $matches ) use ( $placeholder_image ) {
 					$img_src         = $matches[1];
-					$placeholder_src = wp_get_attachment_image_url( $placeholder_image, 'large' );
+					$placeholder_src = wp_get_attachment_image_url( $placeholder_image, $size );
 					if ( $placeholder_src ) {
 						$img_src = $placeholder_src;
 					}
@@ -301,7 +304,7 @@ class Newspack_Image_Credits {
 		$placeholder_image = Newspack_Image_Credits_Settings::get_settings( 'newspack_image_credits_placeholder' );
 
 		if ( empty( $media_credit ) && ! empty( $placeholder_image ) && intval( $placeholder_image ) !== intval( $attachment_id ) ) {
-			$placeholder_data = wp_get_attachment_image_src( $placeholder_image, 'large' );
+			$placeholder_data = wp_get_attachment_image_src( $placeholder_image, $size, $icon );
 			return $placeholder_data;
 		}
 
