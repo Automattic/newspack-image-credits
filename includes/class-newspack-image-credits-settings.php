@@ -76,24 +76,6 @@ class Newspack_Image_Credits_Settings {
 	}
 
 	/**
-	 * Options page callback
-	 */
-	public static function create_admin_page() {
-		?>
-		<div class="wrap">
-			<h1><?php esc_html_e( 'Newspack Image Credits: Settings', 'newspack-image-credits' ); ?></h1>
-			<form method="post" action="options.php">
-			<?php
-				settings_fields( 'newspack_image_credits_options_group' );
-				do_settings_sections( 'newspack-image-credits-settings-admin' );
-				submit_button();
-			?>
-			</form>
-		</div>
-		<?php
-	}
-
-	/**
 	 * Enqueue scripts for settings page.
 	 */
 	public static function enqueue_scripts( $hook_suffix ) {
@@ -121,8 +103,11 @@ class Newspack_Image_Credits_Settings {
 		);
 		foreach ( self::get_default_settings() as $setting ) {
 			register_setting(
-				'newspack_image_credits_options_group',
-				$setting['key']
+				'media',
+				$setting['key'],
+				[
+					'sanitize_callback' => [ __CLASS__, 'sanitize_option_value' ],
+				]
 			);
 			add_settings_field(
 				$setting['key'],
@@ -133,6 +118,20 @@ class Newspack_Image_Credits_Settings {
 				$setting
 			);
 		};
+	}
+
+	/**
+	 * Sanitize option values. Must be either int or sanitized text string.
+	 *
+	 * @param int|string $value Inputted option value.
+	 *
+	 * @return int|string Sanitized value.
+	 */
+	public static function sanitize_option_value( $value ) {
+		if ( is_numeric( $value ) ) {
+			return absint( $value );
+		}
+		return sanitize_text_field( $value );
 	}
 
 	/**
