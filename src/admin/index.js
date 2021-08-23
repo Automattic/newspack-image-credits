@@ -39,7 +39,6 @@ jQuery( function( $ ) {
 				let existingPreview = imageSetting.querySelector(
 					'.newspack-image-credits-placeholder-preview'
 				);
-				console.log( existingPreview );
 				let newClearButton = imageSetting.querySelector( 'input[name="clear-image"]' );
 
 				if ( existingPreview ) {
@@ -63,7 +62,6 @@ jQuery( function( $ ) {
 					newClearButton.addEventListener( 'click', clearImage );
 				}
 
-				console.log( newPreview );
 				input.value = id;
 			}
 		} );
@@ -74,7 +72,6 @@ jQuery( function( $ ) {
 				const selected = frame.state().get( 'selection' );
 				const attachment = wp.media.attachment( parseInt( preview.getAttribute( 'data-id' ) ) );
 				selected.add( attachment || [] );
-				console.log( selected, preview.getAttribute( 'data-id' ) );
 			}
 		} );
 
