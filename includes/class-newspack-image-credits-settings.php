@@ -10,23 +10,9 @@ class Newspack_Image_Credits_Settings {
 	 */
 	public static function init() {
 		add_action( 'admin_init', [ __CLASS__, 'page_init' ] );
-		add_action( 'admin_menu', [ __CLASS__, 'add_menu_item' ] );
 		add_action( 'admin_enqueue_scripts', [ __CLASS__, 'enqueue_scripts' ] );
 	}
 
-	/**
-	 * Add admin menu link.
-	 */
-	public static function add_menu_item() {
-		add_options_page(
-			__( 'Newspack Image Credits', 'newspack-image-credits' ),
-			__( 'Newspack Image Credits', 'newspack-image-credits' ),
-			'edit_posts',
-			'newspack-image-credits',
-			[ __CLASS__, 'create_admin_page' ],
-			36
-		);
-	}
 	/**
 	 * Default values for site-wide settings.
 	 *
@@ -111,7 +97,7 @@ class Newspack_Image_Credits_Settings {
 	 * Enqueue scripts for settings page.
 	 */
 	public static function enqueue_scripts( $hook_suffix ) {
-		if ( 'settings_page_newspack-image-credits' === $hook_suffix ) {
+		if ( 'options-media.php' === $hook_suffix ) {
 			wp_enqueue_media();
 			wp_enqueue_script(
 				'newspack-image-credits-admin',
@@ -129,9 +115,9 @@ class Newspack_Image_Credits_Settings {
 	public static function page_init() {
 		add_settings_section(
 			'newspack_image_credits_options_group',
+			__( 'Image Credits', 'newspack-image-credits' ),
 			null,
-			null,
-			'newspack-image-credits-settings-admin'
+			'media'
 		);
 		foreach ( self::get_default_settings() as $setting ) {
 			register_setting(
@@ -142,7 +128,7 @@ class Newspack_Image_Credits_Settings {
 				$setting['key'],
 				$setting['label'],
 				[ __CLASS__, 'newspack_image_credits_settings_callback' ],
-				'newspack-image-credits-settings-admin',
+				'media',
 				'newspack_image_credits_options_group',
 				$setting
 			);
