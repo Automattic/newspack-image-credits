@@ -30,14 +30,14 @@ class Newspack_Image_Credits_Settings {
 			[
 				'description' => __( 'A label to prefix all image credits. Leave blank to display no prefix.', 'newspack-image-credits' ),
 				'key'         => 'newspack_image_credits_prefix_label',
-				'label'       => __( 'Image Credit Label', 'newpack-listings' ),
+				'label'       => __( 'Image Credit Label', 'newspack-image-credits' ),
 				'type'        => 'input',
 				'value'       => __( 'Credit:', 'newspack-image-credits' ),
 			],
 			[
 				'description' => __( 'A placeholder image to be displayed in place of images without credits. If none is chosen, the image will be displayed normally whether or not it has a credit.', 'newspack-image-credits' ),
 				'key'         => 'newspack_image_credits_placeholder',
-				'label'       => __( 'Placeholder Image', 'newpack-listings' ),
+				'label'       => __( 'Placeholder Image', 'newspack-image-credits' ),
 				'type'        => 'image',
 				'value'       => null,
 			],
@@ -105,9 +105,7 @@ class Newspack_Image_Credits_Settings {
 			register_setting(
 				'media',
 				$setting['key'],
-				[
-					'sanitize_callback' => [ __CLASS__, 'sanitize_option_value' ],
-				]
+				[ 'sanitize_callback' => [ __CLASS__, 'sanitize_option_value' ] ]
 			);
 			add_settings_field(
 				$setting['key'],

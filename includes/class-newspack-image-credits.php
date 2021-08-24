@@ -141,32 +141,32 @@ class Newspack_Image_Credits {
 	 */
 	public static function add_media_credit( $fields, $post ) {
 		$credit_info = self::get_media_credit( $post->ID );
-        $fields['media_credit'] = [
-        	'label' => __( 'Credit', 'newspack-image-credits' ),
-        	'input' => 'text',
-        	'value' => $credit_info['credit'],
-        ];
+		$fields['media_credit'] = [
+			'label' => __( 'Credit', 'newspack-image-credits' ),
+			'input' => 'text',
+			'value' => $credit_info['credit'],
+		];
 
-        $fields['media_credit_url'] = [
-        	'label' => __( 'Credit URL', 'newspack-image-credits' ),
-        	'input' => 'text',
-        	'value' => $credit_info['credit_url'],
-        ];
+		$fields['media_credit_url'] = [
+			'label' => __( 'Credit URL', 'newspack-image-credits' ),
+			'input' => 'text',
+			'value' => $credit_info['credit_url'],
+		];
 
-        $fields['media_credit_org'] = [
-        	'label' => __( 'Organization', 'newspack-image-credits' ),
-        	'input' => 'text',
-        	'value' => $credit_info['organization'],
-        ];
+		$fields['media_credit_org'] = [
+			'label' => __( 'Organization', 'newspack-image-credits' ),
+			'input' => 'text',
+			'value' => $credit_info['organization'],
+		];
 
 		$distfield = 'attachments[' . $post->ID . '][media_can_distribute]';
-        $fields['media_can_distribute'] = [
-        	'label' => __( 'Can distribute?', 'newspack-image-credits' ),
-        	'input' => 'html',
-        	'html' => '<input id="' . $distfield . '" name="' . $distfield . '" type="hidden" value="0" /><input id="' . $distfield . '" name="' . $distfield . '" type="checkbox" value="1" ' . checked( $credit_info['can_distribute'], true, false ) . ' />',
-        ];
+		$fields['media_can_distribute'] = [
+			'label' => __( 'Can distribute?', 'newspack-image-credits' ),
+			'input' => 'html',
+			'html' => '<input id="' . $distfield . '" name="' . $distfield . '" type="hidden" value="0" /><input id="' . $distfield . '" name="' . $distfield . '" type="checkbox" value="1" ' . checked( $credit_info['can_distribute'], true, false ) . ' />',
+		];
 
-        return $fields;
+		return $fields;
 	}
 
 	/**
