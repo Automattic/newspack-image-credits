@@ -1,0 +1,52 @@
+{
+	"name": "newspack-image-credits",
+	"version": "0.0.0",
+	"description": "",
+	"scripts": {
+		"start": "npm run dev",
+		"dev": "calypso-build --watch --config='./webpack.config.js'",
+		"build": "calypso-build --config='./webpack.config.js'",
+		"clean": "rm -rf dist/",
+		"lint": "npm-run-all --parallel lint:*",
+		"lint:js": "eslint --ext .js,.jsx src",
+		"lint:scss": "stylelint \"**/*.scss\" --syntax scss",
+		"format:js": "prettier 'src/**/*.{js,jsx}' --write",
+		"format:scss": "prettier --write 'src/**/*.scss'",
+		"format:php": "./vendor/bin/phpcbf .",
+		"lint:js:staged": "eslint --ext .js,.jsx",
+		"lint:scss:staged": "stylelint --syntax scss",
+		"lint:php:staged": "./vendor/bin/phpcs",
+		"release:archive": "rm -rf release && mkdir -p release && rsync -r . ./release/newspack-image-credits --exclude-from='./.distignore' && cd release && zip -r newspack-image-credits.zip newspack-image-credits"
+	},
+	"lint-staged": {
+		"*.js": "npm run lint:js:staged",
+		"*.scss": "npm run lint:scss:staged",
+		"*.php": "npm run lint:php:staged"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/newspack-image-credits.git"
+	},
+	"license": "GPL-2.0-or-later",
+	"bugs": {
+		"url": "https://github.com/Automattic/newspack-image-credits/issues"
+	},
+	"devDependencies": {
+		"@automattic/calypso-build": "^6.3.0",
+		"@babel/core": "^7.9.0",
+		"@commitlint/cli": "^8.3.5",
+		"@wordpress/eslint-plugin": "^4.1.0",
+		"@wordpress/stylelint-config": "^19.1.0",
+		"eslint": "^6.8.0",
+		"eslint-config-prettier": "^6.10.1",
+		"eslint-plugin-import": "^2.20.2",
+		"eslint-plugin-jsdoc": "^22.1.0",
+		"eslint-plugin-prettier": "^3.1.2",
+		"lint-staged": "^10.1.2",
+		"npm-run-all": "^4.1.5",
+		"prettier": "https://github.com/Automattic/wp-prettier/releases/download/wp-1.16.4/wp-prettier-1.16.4.tgz",
+		"stylelint": "^13.12.0",
+		"stylelint-config-prettier": "^8.0.1",
+		"stylelint-prettier": "^1.1.2"
+	}
+}
