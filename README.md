@@ -1,3 +1,5 @@
+# [Merged into `newspack-plugin`](https://github.com/Automattic/newspack-plugin/pull/1147)
+
 # newspack-image-credits
 
 Run `npm i` to install dependencies.
